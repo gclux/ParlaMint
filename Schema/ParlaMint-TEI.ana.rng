@@ -14,6 +14,23 @@
 
   <include href="ParlaMint-TEI.rng">
     
+    <define name="encodingDesc">
+      <a:documentation>Encoding description linguistically annotated corpus compoment.</a:documentation>
+      <element name="encodingDesc">
+        <ref name="global.atts"/>
+        <element name="projectDesc">
+          <ref name="paras"/>
+        </element>
+        <ref name="tagsDecl"/>
+	<a:documentation>Definition of listPrefix for MTed corpora.</a:documentation>
+	<optional>
+          <element name="listPrefixDef">
+            <ref name="prefixDef"/>
+          </element>
+	</optional>
+      </element>
+    </define>
+    
     <define name="seg">
       <a:documentation>The only element that contains analysed text is the segment. It can,
       however, contain transcription commentary.</a:documentation>
@@ -40,14 +57,35 @@
           <ref name="comment"/>
           <ref name="pb"/>
           <ref name="ner"/>
+          <ref name="phr"/>
           <ref name="word"/>
           <ref name="punct"/>
         </choice>
       </oneOrMore>
-      <ref name="syntax"/>
+      <optional>
+	<ref name="syntax"/>
+      </optional>
     </element>
   </define>
 
+  <define name="phr">
+    <a:documentation>Multi-Word Unit</a:documentation>
+    <element name="phr">
+      <ref name="global.atts"/>
+      <attribute name="function">
+        <data type="token"/>
+      </attribute>
+      <attribute name="ana">
+        <data type="anyURI"/>
+      </attribute>
+      <a:documentation>Currently we only support phrases with semantic markers</a:documentation>
+      <attribute name="type">
+        <value>sem</value>
+      </attribute>
+      <ref name="mwe_tokens"/>
+    </element>
+  </define>
+  
   <define name="ner">
     <a:documentation>Named entity element</a:documentation>
     <choice>
@@ -116,6 +154,16 @@
     </attribute>
   </define>
   
+  <define name="mwe_tokens">
+    <a:documentation>Annotations that can appear in a MWE.</a:documentation>
+    <oneOrMore>
+      <choice>
+        <ref name="word"/>
+        <ref name="punct"/>
+      </choice>
+    </oneOrMore>
+  </define>
+
   <define name="ner_tokens">
     <a:documentation>Annotations that can appear in a NE.</a:documentation>
     <oneOrMore>
@@ -209,7 +257,9 @@
 
   <define name="token.atts">
     <a:documentation>Attributes of token elements.</a:documentation>
-    <ref name="id.att"/>
+    <optional>
+      <ref name="id.att"/>
+    </optional>
     <ref name="lang.att"/>
     <optional>
       <attribute name="join">
@@ -232,6 +282,13 @@
     <optional>
       <attribute name="pos">
 	<ref name="non-empty.string"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="function">
+	<!-- This is different from TEI, where it is a name token (which can't contain comma!?) -->
+	<!--ref name="normalized-space.string"/-->
+        <data type="token"/>
       </attribute>
     </optional>
   </define>

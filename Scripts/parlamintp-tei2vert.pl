@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use warnings;
 use utf8;
 use FindBin qw($Bin);
@@ -13,9 +13,10 @@ $outDir = File::Spec->rel2abs(shift);
 binmode(STDERR, 'utf8');
 
 $Para  = 'parallel --gnu --halt 2 --jobs 10';
-$Saxon = 'java -jar /usr/share/java/saxon.jar';
-$TEI2VERT  = "$Bin/parlamint2xmlvert.xsl";
-$POLISH = "$Bin/parlamint-xml2vert.pl";
+$Saxon = "java -jar $Bin/bin/saxon.jar";
+
+$TEI2VERT = "$Bin/parlamint2xmlvert.xsl";
+$POLISH   = "$Bin/parlamint-xml2vert.pl";
 
 binmode(STDERR,'utf8');
 
@@ -25,8 +26,15 @@ my @compAnaFiles = ();
 $inDir =~ s|[^/]+\.xml$||; # If a specific filename is given, get rid of it
 $corpusFiles = "$inDir/*.ana.xml $inDir/*/*.ana.xml";
 foreach $inFile (glob($corpusFiles)) {
-    if ($inFile =~ m|ParlaMint-[A-Z]{2}(?:-[A-Z0-9]{1,3})?(?:-[a-z]{2,3})?\.ana\.xml|) {$rootAnaFile = $inFile}
-    elsif ($inFile =~ m|ParlaMint-[A-Z]{2}(?:-[A-Z0-9]{1,3})?(?:-[a-z]{2,3})?_.+\.ana\.xml|) {push(@compAnaFiles, $inFile)}
+    if ($inFile =~ m|ParlaMint-[A-Z]{2}(?:-[A-Z0-9]{1,3})?(?:-[a-z]{2,3})?\.ana\.xml|) {
+	#Is this a machine translated corpus? If so, $mt will be the langauge it was translated to.
+	if ($inFile =~ m/-([a-z]{2,3})\.ana/) {$MT = $1}
+	else {$MT = 0}
+	$rootAnaFile = $inFile
+    }
+    elsif ($inFile =~ m|ParlaMint-[A-Z]{2}(?:-[A-Z0-9]{1,3})?(?:-[a-z]{2,3})?_.+\.ana\.xml|) {
+	push(@compAnaFiles, $inFile)
+    }
 }
 
 die "Cannot find root file in $inDir!\n"
@@ -45,6 +53,18 @@ foreach $inFile (@compAnaFiles) {
 }
 close TMP;
 
-$command = "$Saxon meta=$rootAnaFile -xsl:$TEI2VERT {} | $POLISH > $outDir/{/.}.vert";
+#MTed corpora do not have syntactic annotation, and we produce English metadata
+if ($MT) {
+    $noSytaxFlag = 'nosyntax=true';
+    $outLang = 'out-lang=en'
+}
+#For original corpora we produce metadata in source language
+else {
+    $noSytaxFlag = '';
+    $outLang = 'out-lang=xx'
+}
+
+$command = "$Saxon meta=$rootAnaFile $outLang $noSytaxFlag " .
+    "-xsl:$TEI2VERT {} | $POLISH > $outDir/{/.}.vert";
 `cat $fileFile | $Para '$command'`;
 `rename 's/\.ana//' $outDir/*.vert`;

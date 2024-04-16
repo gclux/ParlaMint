@@ -23,6 +23,8 @@
       <attribute name="ana">
         <ref name="anyURIs"/>
       </attribute>
+      <a:documentation>Optional @corresp for MTed corpora.</a:documentation>
+      <ref name="corresp.att"/>
       <ref name="teiHeader"/>
       <ref name="text-body"/>
     </element>
@@ -316,7 +318,6 @@
     <element name="meeting">
       <ref name="global.atts"/>
       <ref name="ana.att"/>
-      <ref name="corresp.att"/>
       <text/>
     </element>
   </define>
@@ -376,17 +377,6 @@
     </element>
   </define>
   
-  <define name="paras">
-    <a:documentation>A series of paragraphs. Paragrapgs are only used in the
-    teiHeader.</a:documentation>
-    <oneOrMore>
-      <element name="p">
-        <ref name="global.atts"/>
-        <ref name="annotated.text"/>
-      </element>
-    </oneOrMore>
-  </define>
-
   <define name="abs">
     <a:documentation>A series of anonymous blocks. Anonymous blocks are only used in the
     teiHeader.</a:documentation>
@@ -530,21 +520,12 @@
     </element>
   </define>
   
-  <define name="pb">
-    <a:documentation>A page break, possible with its source URI.</a:documentation>
-    <element name="pb">
-      <ref name="global.atts"/>
-      <ref name="corresp.att"/>
-      <ref name="source.att"/>
-      <empty/>
-    </element>
-  </define>
-  
   <define name="comment">
     <a:documentation>Any type of transcriber comment.</a:documentation>
     <choice>
       <ref name="note"/>
       <element name="gap">
+	<ref name="global.atts"/>
         <attribute name="reason">
           <choice>
             <value>editorial</value>
@@ -557,6 +538,7 @@
         </oneOrMore>
       </element>
       <element name="kinesic">
+	<ref name="global.atts"/>
         <optional>
           <attribute name="type">
             <ref name="kinesicType.val"/>
@@ -570,6 +552,7 @@
         </oneOrMore>
       </element>
       <element name="incident">
+	<ref name="global.atts"/>
         <optional>
           <attribute name="type">
             <ref name="incidentType.val"/>
@@ -583,6 +566,7 @@
         </oneOrMore>
       </element>
       <element name="vocal">
+	<ref name="global.atts"/>
         <attribute name="type">
           <ref name="vocalType.val"/>
         </attribute>

@@ -17,7 +17,9 @@ start =
     >> a:documentation [
          "Obligatory @ana determining what scope this document has."
        ],
-    attribute ana { anyURIs },
+    attribute ana { anyURIs }
+    >> a:documentation [ "Optional @corresp for MTed corpora." ],
+    corresp.att,
     teiHeader,
     text-body
   }
@@ -172,7 +174,7 @@ title =
   }
 
 ## A "meeting" (e.g. session) of the parliament.
-meeting = element meeting { global.atts, ana.att, corresp.att, text }
+meeting = element meeting { global.atts, ana.att, text }
 
 ## Publisher of the corpus.
 publisher =
@@ -199,10 +201,6 @@ name-header =
     lang.att,
     normalized-space.string
   }
-
-## A series of paragraphs. Paragrapgs are only used in the
-##     teiHeader.
-paras = element p { global.atts, annotated.text }+
 
 ## A series of anonymous blocks. Anonymous blocks are only used in the
 ##     teiHeader.
@@ -272,27 +270,28 @@ note =
     (time | pb | text)+
   }
 
-## A page break, possible with its source URI.
-pb = element pb { global.atts, corresp.att, source.att, empty }
-
 ## Any type of transcriber comment.
 comment =
   note
   | element gap {
+      global.atts,
       attribute reason { "editorial" | "inaudible" | "foreign" },
       incidentDesc+
     }
   | element kinesic {
+      global.atts,
       attribute type { kinesicType.val }?,
       who.att?,
       incidentDesc+
     }
   | element incident {
+      global.atts,
       attribute type { incidentType.val }?,
       who.att?,
       incidentDesc+
     }
   | element vocal {
+      global.atts,
       attribute type { vocalType.val },
       who.att?,
       incidentDesc+

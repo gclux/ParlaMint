@@ -1,61 +1,30 @@
-## We use this Makefile also for testing scripts:
-META = $F/DataXI/ParlaMint-CZ/ParlaMint-CZ.xml
-cl-test:
-	#$s -xsl:../Scripts/check-links.xsl ${META}
-	$s meta=${META} -xsl:../Scripts/check-links.xsl \
-	$F/DataXI/ParlaMint-CZ/ParlaMint-CZ_2016-04-13-ps2013-044-02-013-114.xml
-
-F = ../../Factorized
-f-test:	f-test-root f-test-anaroot f-test-component f-test-anacomponent f-test-splits f-test-odd
-
-f-test-root:
-	$j ParlaMint-teiCorpus.rng $F/Data/ParlaMint-CZ/ParlaMint-CZ.xml
-	$j ParlaMint-teiCorpus.rng $F/DataXI/ParlaMint-CZ/ParlaMint-CZ.xml
-	$j ParlaMint-teiCorpus.rng $F/Data/ParlaMint-BE/ParlaMint-BE.xml
-	$j ParlaMint-teiCorpus.rng $F/DataXI/ParlaMint-BE/ParlaMint-BE.xml
-f-test-anaroot:
-	$j ParlaMint-teiCorpus.ana.rng $F/Data/ParlaMint-CZ/ParlaMint-CZ.ana.xml
-	$j ParlaMint-teiCorpus.ana.rng $F/DataXI/ParlaMint-CZ/ParlaMint-CZ.ana.xml
-	$j ParlaMint-teiCorpus.ana.rng $F/Data/ParlaMint-BE/ParlaMint-BE.ana.xml
-	$j ParlaMint-teiCorpus.ana.rng $F/DataXI/ParlaMint-BE/ParlaMint-BE.ana.xml
-f-test-component:
-	$j ParlaMint-TEI.rng $F/Data/ParlaMint-CZ/ParlaMint-CZ_2016-04-13-ps2013-044-02-013-114.xml
-	$j ParlaMint-TEI.rng $F/Data/ParlaMint-BE/ParlaMint-BE_2014-06-30-54-plenair-ip002x.xml
-f-test-anacomponent:
-	$j ParlaMint-TEI.ana.rng   $F/Data/ParlaMint-CZ/ParlaMint-CZ_2016-04-13-ps2013-044-02-013-114.ana.xml
-	$j ParlaMint-TEI.ana.rng   $F/Data/ParlaMint-BE/ParlaMint-BE_2014-06-30-54-plenair-ip002x.ana.xml
-f-test-splits:
-	$j ParlaMint-taxonomy.rng  $F/DataXI/ParlaMint-CZ/ParlaMint-CZ-taxonomy-*.xml
-	$j ParlaMint-taxonomy.rng  $F/DataXI/ParlaMint-BE/ParlaMint-BE-taxonomy-*.xml
-	$j ParlaMint-listOrg.rng   $F/DataXI/ParlaMint-CZ/ParlaMint-CZ-listOrg.xml
-	$j ParlaMint-listOrg.rng   $F/DataXI/ParlaMint-BE/ParlaMint-BE-listOrg.xml
-	$j ParlaMint-listPerson.rng   $F/DataXI/ParlaMint-CZ/ParlaMint-CZ-listPerson.xml
-	$j ParlaMint-listPerson.rng   $F/DataXI/ParlaMint-BE/ParlaMint-BE-listPerson.xml
-f-test-odd:
-	$j ../TEI/ParlaMint.odd.rng $F/Data/ParlaMint-CZ/ParlaMint-CZ.xml
-	$j ../TEI/ParlaMint.odd.rng $F/DataXI/ParlaMint-CZ/ParlaMint-CZ.xml
-	$j ../TEI/ParlaMint.odd.rng $F/Data/ParlaMint-BE/ParlaMint-BE.xml
-	$j ../TEI/ParlaMint.odd.rng $F/DataXI/ParlaMint-BE/ParlaMint-BE.xml
-	$j ../TEI/ParlaMint.odd.rng $F/Data/ParlaMint-CZ/ParlaMint-CZ.ana.xml
-	$j ../TEI/ParlaMint.odd.rng $F/DataXI/ParlaMint-CZ/ParlaMint-CZ.ana.xml
-	$j ../TEI/ParlaMint.odd.rng $F/Data/ParlaMint-BE/ParlaMint-BE.ana.xml
-	$j ../TEI/ParlaMint.odd.rng $F/DataXI/ParlaMint-BE/ParlaMint-BE.ana.xml
-	$j ../TEI/ParlaMint.odd.rng $F/Data/ParlaMint-CZ/ParlaMint-CZ_2016-04-13-ps2013-044-02-013-114.xml
-	$j ../TEI/ParlaMint.odd.rng $F/Data/ParlaMint-BE/ParlaMint-BE_2014-06-30-54-plenair-ip002x.xml
-	$j ../TEI/ParlaMint.odd.rng   $F/Data/ParlaMint-CZ/ParlaMint-CZ_2016-04-13-ps2013-044-02-013-114.ana.xml
-	$j ../TEI/ParlaMint.odd.rng   $F/Data/ParlaMint-BE/ParlaMint-BE_2014-06-30-54-plenair-ip002x.ana.xml
-
-
-list:
-	grep '<element name=' ParlaMint-*.rng | perl -pe 's|.+="||; s|">||' | sort | uniq
+### Makefile for testing samples against Parla-CLARIN, ParlaMint ODD and ParlaMint RelaxNG schemas
+### and converting RelaxNG .rng to .rnc
 nohup:
 	nohup time make all > compile.log &
-all:	trang
-xall:	val trang
+all:	val rnc
+xall:	val rnc
 
-#Authored, strangely enough, in .rng!
-t = java -jar /usr/share/java/trang.jar
-trang:	rnc
+ALL = ../Samples/ParlaMint-*
+ANA = '.ana'
+TAX = 'taxonomy'
+LST = 'list'
+val:
+	-ls ${ALL}/ParlaMint-*.xml   | grep -v ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${pc}
+	-ls ${ALL}/ParlaMint-*.xml   | grep -v ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${pp}
+	-ls ${ALL}/ParlaMint-*.xml   | grep -v ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${vrt}
+	-ls ${ALL}/*/ParlaMint-*.xml | grep -v ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${vct}
+
+	-ls ${ALL}/ParlaMint-*.xml   | grep    ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${pc}
+	-ls ${ALL}/ParlaMint-*.xml   | grep    ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${pp}
+	-ls ${ALL}/ParlaMint-*.xml   | grep    ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${vra}
+	-ls ${ALL}/*/ParlaMint-*.xml | grep    ${ANA} | grep -v ${TAX} | grep -v ${LST} | xargs ${vca}
+
+	-ls ${ALL}/ParlaMint-*listOrg.xml    | xargs ${vlo}
+	-ls ${ALL}/ParlaMint-*listPerson.xml | xargs ${vlp}
+	-ls ${ALL}/ParlaMint-*taxonomy*.xml  | xargs ${vta}
+
+#Convert to RelaxNG compact syntax
 rnc:
 	$t ParlaMint-TEI.rng ParlaMint-TEI.rnc
 	$t ParlaMint-TEI.ana.rng ParlaMint-TEI.ana.rnc
@@ -66,7 +35,7 @@ rnc:
 	$t ParlaMint-taxonomy.rng ParlaMint-taxonomy.rnc
 
 #Doesn't work, cf. https://github.com/clarin-eric/ParlaMint/issues/74
-xsd:
+xxx-xsd:
 	$t ParlaMint-TEI.rng ParlaMint-TEI.xsd
 	$t ParlaMint-TEI.ana.rng ParlaMint-TEI.ana.xsd
 	$t ParlaMint-teiCorpus.rng ParlaMint-teiCorpus.xsd
@@ -75,39 +44,26 @@ xsd:
 	$t ParlaMint-listPerson.rng ParlaMint-listPerson.xsd
 	$t ParlaMint-taxonomy.rng ParlaMint-taxonomy.xsd
 
-#DATADIR = ../Data
-# For testing v3 corpora
-DATADIR = ../../ParlaMint-data/Data
-ALL = ${DATADIR}/ParlaMint-*/ParlaMint-*.xml
-#ALL = ${DATADIR}/ParlaMint-AT/ParlaMint-AT_1996-01-15-020-XX-NRSITZ-00001.ana.xml
-ANA = '.ana'
-TAX = 'taxonomy'
-LST = 'list'
-val:
-	-ls ${ALL} | grep -v ${ANA} | grep -v ${TAX} | grep -v ${LST} | grep -v '_' | xargs ${pc}
-	-ls ${ALL} | grep -v ${ANA} | grep -v ${TAX} | grep -v ${LST} | grep -v '_' | xargs ${vrt}
-	-ls ${ALL} | grep -v ${ANA} | grep -v ${TAX} | grep -v ${LST} | grep    '_' | xargs ${vct}
-	-ls ${ALL} | grep    ${ANA} | grep -v ${TAX} | grep -v ${LST} | grep -v '_' | xargs ${pc}
-	-ls ${ALL} | grep    ${ANA} | grep -v ${TAX} | grep -v ${LST} | grep -v '_' | xargs ${vra}
-	-ls ${ALL} | grep    ${ANA} | grep -v ${TAX} | grep -v ${LST} | grep    '_' | xargs ${vca}
-	-ls ${DATADIR}/ParlaMint-*/ParlaMint-*listOrg.xml    | xargs ${vlo}
-	-ls ${DATADIR}/ParlaMint-*/ParlaMint-*listPerson.xml | xargs ${vlp}
-	-ls ${DATADIR}/ParlaMint-*/ParlaMint-*taxonomy*.xml  | xargs ${vta}
+## Count definitions
+list:
+	grep '<element name=' ParlaMint-*.rng | perl -pe 's|.+="||; s|">||' | sort | uniq
 
+### Validations scenarios as variables
+# Parla-CLARIN schema from https://github.com/clarin-eric/parla-clarin/tree/master/Schema
 pc = -I % $s -xi -xsl:../Scripts/copy.xsl % | $j parla-clarin.rng
-vrt = $j ParlaMint-teiCorpus.rng 	# Corpus root / text
-vct = $j ParlaMint-TEI.rng		# Corpus component / text
-vra = $j ParlaMint-teiCorpus.ana.rng	# Corpus root / analysed
-vca = $j ParlaMint-TEI.ana.rng		# Corpus component / analysed
-vlo = $j ParlaMint-listOrg.rng		# Corpus organisation list
-vlp = $j ParlaMint-listPerson.rng	# Corpus person list
-vta = $j ParlaMint-taxonomy.rng		# Corpus taxonomy
+# ParlaMint ODD schema from ../TEI/
+pp = -I % $s -xi -xsl:../Scripts/copy.xsl % | $j ParlaMint.odd.rng
 
-s = java -jar /usr/share/java/saxon.jar
-j = java -jar /usr/share/java/jing.jar
+vrt = $j ParlaMint-teiCorpus.rng 	# Corpus TEI root (text)
+vct = $j ParlaMint-TEI.rng		# Corpus TEI component (text)
+vra = $j ParlaMint-teiCorpus.ana.rng	# Corpus TEI.ana root (ling. analysed)
+vca = $j ParlaMint-TEI.ana.rng		# Corpus TEI component (analysed)
+vlo = $j ParlaMint-listOrg.rng		# Corpus TEI organisation list
+vlp = $j ParlaMint-listPerson.rng	# Corpus TEI person list
+vta = $j ParlaMint-taxonomy.rng		# Corpus TEI taxonomy
+
+#Prerequisites
 P = parallel --citation --gnu --halt 2
-
-#Count things like org/@role
-what = grep ' corresp=' | grep corresp
-what:
-	cat ${ALL} | ${what}
+s = java -jar ../Scripts/bin/saxon.jar
+j = java -jar ../Scripts/bin/jing.jar
+t = java -jar ../Scripts/bin/trang.jar

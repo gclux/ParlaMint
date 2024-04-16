@@ -31,9 +31,9 @@ jobs:
         id: detect-changes
         uses: ./ParlaMint/.github/actions/ParlaMintStatus
       - name: Test total TEI file size limit
-        if: ${{ steps.detect-changes.outputs.parla_changed_size > 100 }}
+        if: ${{ steps.detect-changes.outputs.max_parla_changed_size > 100 }}
         run: |
-          echo "::error::100MB file limit has been exceed"
+          echo "::error::100MB file limit has been exceed my one parliament"
           exit 1
 
   ValidateCountries:
@@ -57,6 +57,7 @@ jobs:
         uses: ./ParlaMint/.github/actions/ParlaMintValidate
         with:
           parlas: '["${{matrix.parla}}"]'
+          requireTaxonomiesTranslations: '${{ vars.REQUIRE_TRANSLATIONS }}'
   Validate:
     runs-on: ubuntu-latest
     needs: [ValidateCountries]

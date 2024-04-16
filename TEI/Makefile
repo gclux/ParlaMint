@@ -2,7 +2,6 @@ check: prepare val-schema html mount
 
 # Validate and compile ODD to RelaxNG, validate samples, make HTML
 all:	prepare val-schema xml-schemas val-samples html
-# We cannot currently validate samples, as they need first to be updated.
 xall:	prepare val-schema xml-schemas val-samples html
 
 # Builds html and pushes it
@@ -42,8 +41,7 @@ val-schema:
 	$j tei_odds.rng tmp/ParlaMint.xml
 
 # Validate samples
-#DATA = ../Data
-DATA = ../../ParlaMint-data/Data
+DATA = ../Samples
 val-samples:
 	./validate.pl samples ${DATA}
 
@@ -76,6 +74,6 @@ setup:
 	mkdir -p tmp
 	git -C ../Scripts clone git@github.com:TEIC/Stylesheets.git
 
-### Location of Jing (for RelaxNG validation) and Saxon (for XSLT stylesheets)
-j = java -jar /usr/share/java/jing.jar
-s = java -jar /usr/share/java/saxon.jar
+#Prerequisites
+s = java -jar ../Scripts/bin/saxon.jar
+j = java -jar ../Scripts/bin/jing.jar

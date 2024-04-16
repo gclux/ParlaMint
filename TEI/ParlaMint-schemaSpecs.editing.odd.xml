@@ -30,7 +30,7 @@
   <moduleRef key="figures"
              include="figure"/>
   <moduleRef key="analysis"
-             include="pc s w"/>
+             include="pc s w phr"/>
   
   <!-- Attributes used in ParlaMint: -->
   <classRef key="att.anchoring" include=""/>
@@ -94,7 +94,7 @@
         <elementRef key="include"/>
       </alternate>
     </content>
-    <!-- Make @xml:id, @xml:lang required, remove the other attributes -->
+    <!-- Make @xml:id, @xml:lang required, allow @corresp, remove the other attributes -->
     <attList>
       <attDef ident="xml:id" mode="replace" usage="req">
         <datatype>
@@ -106,6 +106,7 @@
           <dataRef key="teidata.language"/>
         </datatype>
       </attDef>
+      <pm:attPreserve ident="corresp"/>
     </attList>
     <exemplum xml:lang="en">
       <p>General structure of a ParlaMint corpus root:</p>
@@ -182,6 +183,7 @@
           <dataRef key="teidata.pointer"/>
         </datatype>
       </attDef>
+      <pm:attPreserve ident="corresp"/>
     </attList>
     <exemplum xml:lang="en">
       <p>Example of ParlaMint corpus component:</p>
@@ -251,7 +253,7 @@
         <elementRef key="u"/>
       </alternate>
     </content>
-    <!-- Redefine type values, remove other attributes except xml:id, xml:lang, n, subtype -->
+    <!-- Redefine type values, remove other attributes except xml:id, xml:lang, n, corresp, subtype -->
     <attList>
       <attDef ident="type" mode="replace" usage="req">
         <valList type="closed">
@@ -271,6 +273,7 @@
       <pm:attPreserve ident="xml:lang"/>
       <pm:attPreserve ident="n"/>
       <pm:attPreserve ident="subtype"/>
+      <pm:attPreserve ident="corresp"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
@@ -518,6 +521,9 @@
           <valItem ident="foreign"/>
         </valList>
       </attDef>
+      <pm:attPreserve ident="xml:id"/>
+      <pm:attPreserve ident="xml:lang"/>
+      <pm:attPreserve ident="n"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
@@ -563,15 +569,12 @@
     <exemplum xml:lang="en" versionDate="2021-03-15">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
         <p>Example of <gi>desc</gi> elements for transcriber comments:</p>
-        
         <gap reason="inaudible">
           <desc>speaker spoke too quietly, not understood</desc>
         </gap>
-        
         <kinesic type="applause">
           <desc xml:lang="sl">ploskanje</desc>
         </kinesic>
-        
         <vocal type="interruption">
           <desc>sounds from the chamber</desc>
         </vocal>
@@ -623,8 +626,8 @@
           <desc xml:lang="sl"><term>Podkorpusi</term></desc>
           <desc xml:lang="en"><term>Subcorpora</term></desc>
           <category xml:id="reference">
-            <catDesc xml:lang="sl"><term>Referenca</term>: referenčni podkorpus, do 2019-10-31</catDesc>
-            <catDesc xml:lang="en"><term>Reference</term>: reference subcorpus, until 2019-10-31</catDesc>
+            <catDesc xml:lang="sl"><term>Referenca</term>: referenčni podkorpus, do 2020-10-30</catDesc>
+            <catDesc xml:lang="en"><term>Reference</term>: reference subcorpus, until 2020-01-30</catDesc>
           </category>
           ...
         </taxonomy>
@@ -668,10 +671,6 @@
       <pm:attPreserve ident="n"/>
       <pm:attPreserve ident="source"/>
       <pm:attPreserve ident="corresp"/>
-      <pm:attPreserve ident="xml:id"/>
-      <pm:attPreserve ident="n"/>
-      <pm:attPreserve ident="source"/>
-      <pm:attPreserve ident="corresp"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
@@ -707,6 +706,7 @@
       <pm:attPreserve ident="who"/>
       <pm:attPreserve ident="ana"/>
       <pm:attPreserve ident="source"/>
+      <pm:attPreserve ident="corresp"/>
     </attList>
     <exemplum xml:lang="en">
       <p>The element <gi>u</gi> marks up a speech, as illustrated below:
@@ -741,6 +741,7 @@
       <pm:attPreserve ident="xml:id"/>
       <pm:attPreserve ident="xml:lang"/>
       <pm:attPreserve ident="n"/>
+      <pm:attPreserve ident="corresp"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
@@ -758,6 +759,7 @@
         <elementRef key="w"/>
         <elementRef key="pc"/>
         <elementRef key="name"/>
+        <elementRef key="phr"/>
         <elementRef key="num"/>
         <elementRef key="date"/>
         <elementRef key="time"/>
@@ -768,11 +770,12 @@
         <elementRef key="gap"/>
         <elementRef key="pb"/>
       </alternate>
-      <elementRef key="linkGrp"/>
+      <elementRef key="linkGrp" minOccurs="0" maxOccurs="1"/>
     </content>
     <attList>
       <pm:attPreserve ident="xml:id"/>
       <pm:attPreserve ident="xml:lang"/>
+      <pm:attPreserve ident="corresp"/>
       <pm:attPreserve ident="n"/>
     </attList>
     <exemplum xml:lang="en">
@@ -788,6 +791,45 @@
              msd="UPosTag=NOUN|Number=Sing" pos="NN" join="right">amendment</w>
           <pc msd="UPosTag=PUNCT" pos=".">.</pc>
          </s>
+      </egXML>
+    </exemplum>
+  </elementSpec>
+  <elementSpec ident="phr" module="analysis" mode="change">
+    <desc versionDate="2023-11-06" xml:lang="en">contains a semantic multi-word unit.</desc>
+    <content>
+      <alternate minOccurs="1" maxOccurs="unbounded">
+        <elementRef key="w"/>
+        <elementRef key="pc"/>
+        <elementRef key="pb"/>
+        <textNode/>
+      </alternate>
+    </content>
+    <attList>
+      <attDef ident="type" mode="replace" usage="opt">
+        <valList type="closed">
+          <valItem ident="sem"/>
+        </valList>
+      </attDef>
+      <attDef ident="function" mode="change" usage="req"/>
+      <attDef ident="ana" mode="change" usage="req"/>
+      <pm:attPreserve ident="xml:id"/>
+      <pm:attPreserve ident="xml:lang"/>
+    </attList>
+    <exemplum xml:lang="en">
+      <p>The element is used to mark multi-word units (MWEs) which have a semantic interpretation.
+      The <att>type</att> should be set to <val>sem</val>.
+      The MWE should be marked with the <att>function</att> (all semantic tags) and <att>ana</att> (semantic categories) attributes:
+      </p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
+        ...
+        ...
+        <phr type="sem" function="Z4" ana="sem:Z4">
+          <w pos="IN" msd="UPosTag=ADP" lemma="on" function="Z4" ana="sem:Z4">On</w>
+          <w pos="DT" msd="UPosTag=DET|Definite=Def|PronType=Art" lemma="the" function="Z4" ana="sem:Z4">the</w>
+          <w pos="JJ" msd="UPosTag=ADJ|Degree=Pos" lemma="other" function="Z4" ana="sem:Z4">other</w>
+          <w pos="NN" msd="UPosTag=NOUN|Number=Sing" lemma="hand" function="Z4" ana="sem:Z4" join="right">hand</w>
+        </phr>
+        ...
       </egXML>
     </exemplum>
   </elementSpec>
@@ -975,6 +1017,12 @@
         <elementRef key="name"/>
         <elementRef key="date"/>
         <elementRef key="num"/>
+        <elementRef key="time"/>
+        <elementRef key="note"/>
+        <elementRef key="vocal"/>
+        <elementRef key="kinesic"/>
+        <elementRef key="incident"/>
+        <elementRef key="gap"/>
         <elementRef key="pb"/>
         <textNode/>
       </alternate>
@@ -1002,7 +1050,23 @@
       <pm:attPreserve ident="subtype"/>
     </attList>
     <exemplum xml:lang="en">
-      <p>Element <gi>name</gi> is used in the TEI header to specify location of the parliament:
+      <p>The element is used to mark up Named Entities in the linguistically analysed corpus,
+      in which case it should have the <att>type</att> attribute with one of the allowed values.
+      It can also have a <att>ref</att> attribute to link it a definition:
+      </p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
+        ...
+        <w lemma="and" msd="UPosTag=CCONJ">and</w>
+        <name type="ORG" ref="https://en.wikipedia.org/wiki/Westminster">
+          <w join="right" lemma="Westminster"
+             msd="UPosTag=PROPN|Number=Sing">Westminster</w>
+        </name>
+        <w lemma="," msd="UPosTag=PUNCT">,</w>
+        ...
+      </egXML>
+    </exemplum>
+    <exemplum xml:lang="en">
+      <p>Element <gi>name</gi> is used in the TEI header to specify the location of the parliament:
       </p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
         <name type="place">Westminster</name>
@@ -1020,22 +1084,6 @@
           <change when="2021-05-28">
           <name>Tomaž Erjavec</name>: Built corpus.</change>
         </revisionDesc>
-      </egXML>
-    </exemplum>
-    <exemplum xml:lang="en">
-      <p>The element is also used to mark up Named Entities in the linguistically analysed corpus,
-      in which case it should have the <att>type</att> attribute with one of the allowed values.
-      It can also have a <att>ref</att> attribute to link it a definition:
-      </p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
-        ...
-        <w lemma="and" msd="UPosTag=CCONJ">and</w>
-        <name type="ORG" ref="https://en.wikipedia.org/wiki/Westminster">
-          <w join="right" lemma="Westminster"
-             msd="UPosTag=PROPN|Number=Sing">Westminster</w>
-        </name>
-        <w lemma="," msd="UPosTag=PUNCT">,</w>
-        ...
       </egXML>
     </exemplum>
   </elementSpec>
@@ -1292,7 +1340,7 @@
             <meeting n="35-upper" ana="#parla.upper #parla.term">35ste Eerste Kamer</meeting>
             <meeting n="36-upper" ana="#parla.upper #parla.term">36ste Eerste Kamer</meeting>
             <respStmt>
-              <persName xml:lang="nl">Ruben van Heusden</persName>
+              <persName xml:id="RubenvanHeusden" xml:lang="nl">Ruben van Heusden</persName>
               <resp xml:lang="en">Downloading and converting the corpus to TEI format</resp>
             </respStmt>
             <funder>
@@ -1349,7 +1397,7 @@
             <meeting ana="#parla.lower #parla.session" corresp="#TK" n="2">Session 2</meeting>
             <meeting ana="#parla.lower #parla.term #TK.28" corresp="#TK" n="28-lower">Meeting of the 28th Tweede Kamer</meeting>
             <respStmt>
-              <persName>Ruben van Heusden</persName>
+              <persName xml:id="RubenvanHeusden" xml:lang="nl">Ruben van Heusden</persName>
               <resp xml:lang="en">Downloading and converting the corpus to TEI format</resp>
             </respStmt>
             <funder>
@@ -1561,6 +1609,7 @@
       </alternate>
     </content>
     <attList>
+      <pm:attPreserve ident="xml:id"/>
       <pm:attPreserve ident="xml:lang"/>
       <pm:attPreserve ident="ref"/>
       <pm:attPreserve ident="from"/>
@@ -1595,6 +1644,9 @@
     <content>
       <textNode/>
     </content>
+    <attList>
+      <pm:attPreserve ident="xml:lang"/>
+    </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
         <persName>
@@ -1612,7 +1664,9 @@
     <content>
       <textNode/>
     </content>
-    <attList/>
+    <attList>
+      <pm:attPreserve ident="xml:lang"/>
+    </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
         <persName>
@@ -1631,7 +1685,9 @@
     <content>
       <textNode/>
     </content>
-    <attList/>
+    <attList>
+      <pm:attPreserve ident="xml:lang"/>
+    </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
         <person xml:id="PicóAntoni">
@@ -1655,11 +1711,7 @@
       <textNode/>
     </content>
     <attList>
-      <attDef ident="xml:lang" mode="replace" usage="opt">
-        <datatype>
-          <dataRef key="teidata.language"/>
-        </datatype>
-      </attDef>
+      <pm:attPreserve ident="xml:lang"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
@@ -1686,12 +1738,35 @@
     <content>
       <textNode/>
     </content>
-    <attList/>
+    <attList>
+      <pm:attPreserve ident="xml:lang"/>
+      <attDef ident="type" mode="replace" usage="opt">
+        <valList type="closed">
+          <valItem ident="birth"/>
+          <valItem ident="patronym"/>
+          <valItem ident="married"/>
+        </valList>
+      </attDef>
+    </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
         <persName>
           <surname>Accetto</surname>
           <forename>Matej</forename>
+        </persName>
+      </egXML>
+    </exemplum>
+    <exemplum xml:lang="en">
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
+        <persName>
+          <forename>Ірина</forename>
+          <surname type="patronym">Борисівна</surname>
+          <surname>Щеняєва</surname>
+        </persName>
+        <persName xml:lang="uk-Latn">
+          <forename>Iryna</forename>
+          <surname type="patronym">Borysivna</surname>
+          <surname>Ščenjajeva</surname>
         </persName>
       </egXML>
     </exemplum>
@@ -2653,8 +2728,7 @@
     </exemplum>
   </elementSpec>
   <elementSpec ident="taxonomy" module="header" mode="change">
-    <desc versionDate="2022-11-10" xml:lang="en">defines a typology explicitly by a structured
-    taxonomy.</desc>
+    <desc versionDate="2022-11-10" xml:lang="en">defines a typology explicitly by a structured taxonomy.</desc>
     <content>
       <elementRef key="desc" minOccurs="1" maxOccurs="unbounded"/>
       <elementRef key="category" minOccurs="1" maxOccurs="unbounded"/>
@@ -2674,15 +2748,15 @@
           </desc>
           <category xml:id="reference">
             <catDesc xml:lang="sl">
-            <term>Referenca</term>: referenčni podkorpus, do 2019-10-31</catDesc>
+            <term>Referenca</term>: referenčni podkorpus, do 2020-01-30</catDesc>
             <catDesc xml:lang="en">
-            <term>Reference</term>: reference subcorpus, until 2019-10-31</catDesc>
+            <term>Reference</term>: reference subcorpus, until 2020-01-30</catDesc>
           </category>
           <category xml:id="covid">
             <catDesc xml:lang="sl">
-            <term>COVID</term>: COVID podkorpus, od 2019-11-01 dalje</catDesc>
+            <term>COVID</term>: COVID podkorpus, od 2020-01-31 dalje</catDesc>
             <catDesc xml:lang="en">
-            <term>COVID</term>: COVID subcorpus, from 2019-11-01 onwards</catDesc>
+            <term>COVID</term>: COVID subcorpus, from 2020-01-31 onwards</catDesc>
           </category>
         </taxonomy>
       </egXML>
@@ -2731,9 +2805,7 @@
     </exemplum>    
   </elementSpec>
   <elementSpec ident="category" module="header" mode="change">
-    <desc
-        versionDate="2005-01-14"
-        xml:lang="en">contains an individual descriptive category, possibly nested within a superordinate
+    <desc versionDate="2005-01-14" xml:lang="en">contains an individual descriptive category, possibly nested within a superordinate
     category, within a user-defined taxonomy.</desc>
     <content>
       <elementRef key="catDesc" minOccurs="1" maxOccurs="unbounded"/>
@@ -2742,6 +2814,7 @@
     <attList>
       <attDef ident="xml:id" mode="change" usage="req"/>
       <attDef ident="ana" mode="change" usage="opt"/>
+      <pm:attPreserve ident="n"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
@@ -3263,11 +3336,7 @@
     </exemplum>
   </elementSpec>
   <elementSpec ident="org" module="namesdates" mode="change">
-    <desc
-        versionDate="2007-06-14"
-        xml:lang="en">provides information
-    about an identifiable organisation such as a business, a tribe, or
-    any other grouping of people.</desc>
+    <desc versionDate="2023-04-06" xml:lang="en">provides information about an identifiable organisation such as the government, political party, ministry etc.</desc>
     <content>
       <sequence>
         <elementRef key="head" minOccurs="0" maxOccurs="unbounded"/>
@@ -3284,6 +3353,7 @@
       <attDef ident="role" mode="replace" usage="req">
         <valList type="closed">
           <valItem ident="country"/>
+          <valItem ident="federatedState"/>
           <valItem ident="republic"/>
           <valItem ident="government"/>
           <valItem ident="ministry"/>
@@ -3313,6 +3383,7 @@
           <valItem ident="ethnicCommunity"/>
         </valList>
       </attDef>
+      <pm:attPreserve ident="xml:lang"/>
       <pm:attPreserve ident="ana"/>
     </attList>
     <exemplum xml:lang="en">
@@ -3515,84 +3586,70 @@
     </exemplum>
   </elementSpec>
   <elementSpec ident="state" module="namesdates" mode="change">
-    <desc versionDate="2022-10-04" xml:lang="en">defines the political orientation of a political party or parliamentary group. The orientation can be taken from CHES, Wikipedia or an unknown source.</desc>
-  <content>
-    <alternate>
-      <elementRef key="label"/>
-      <elementRef key="note" minOccurs="0" maxOccurs="unbounded"/>
-    </alternate>
-  </content>
-  <attList>
+    <desc versionDate="2024-01-25" xml:lang="en">defines additional metadata on a political party or parliamentary group,
+    e.g. its political orientation.</desc>
+    <content>
+      <sequence>
+        <elementRef key="note" minOccurs="0" maxOccurs="unbounded"/>
+        <elementRef key="state" minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+    </content>
+    <attList>
     <attDef ident="type" mode="replace" usage="req">
       <valList type="closed">
         <valItem ident="politicalOrientation"/>
-      </valList>
-    </attDef>
-    <attDef ident="subtype" mode="replace" usage="req">
-      <valList type="closed">
-        <valItem ident="CHES"/>
+        <valItem ident="encoder"/>
         <valItem ident="Wikipedia"/>
-        <valItem ident="unknown"/>
+        <valItem ident="CHES"/>
+        <valItem ident="variable"/>
+        <valItem ident="value"/>
       </valList>
     </attDef>
-    <attDef ident="ana" mode="change" usage="req">
+    <attDef ident="ana" mode="change" usage="opt">
       <datatype>
         <dataRef key="teidata.pointer"/>
       </datatype>
     </attDef>
     <pm:attPreserve ident="source"/>
-    <pm:attPreserve ident="n"/>
+    <pm:attPreserve ident="key"/>
     <pm:attPreserve ident="from"/>
     <pm:attPreserve ident="to"/>
+    <pm:attPreserve ident="n"/>
   </attList>
   <exemplum xml:lang="en">
+    <p>Encoding political orientation as entered by an encoder:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples">
-      <state type="politicalOrientation"
-             subtype="unknown"
-             ana="#orientation.L"/>
+      <state type="politicalOrientation">
+        <state type="encoder" source="#GrietDepoorter" ana="#orientation.CRR">
+          <note xml:lang="en">Orientation determined by encoder, using own knowledge of the parliamentary group.</note>
+        </state>
+      </state>
     </egXML>
   </exemplum>
   <exemplum xml:lang="en">
+    <p>Encoding Wikipedia-sourced political orientation:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples">
-      <state type="politicalOrientation"
-             subtype="Wikipedia"
-             source="https://en.wikipedia.org/wiki/Christian_Democratic_and_Flemish"
-             ana="#orientation.CCR">
-        <note xml:lang="en">CD&amp;V, CDV, CVP (until 2001)</note>
+      <state type="politicalOrientation">
+         <state type="Wikipedia" source="https://lv.wikipedia.org/wiki/Attīstībai/Par!" ana="#orientation.C"/>
       </state>
     </egXML>
   </exemplum>
-  <exemplum versionDate="2008-04-06" xml:lang="fr">
+  <exemplum xml:lang="en">
+    <p>Encoding CHES-sourced variables and their values, with @key containing the CHES name for the political party:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples">
-      <state type="politicalOrientation"
-             subtype="CHES"
-             source="https://www.chesdata.eu/s/1999-2019_CHES_dataset_meansv3.csv"
-             n="2.29"
-             ana="#orientation.L"
-             from="2010"
-             to="2013">
-        <label>
-          <orgName full="init">Groen</orgName>
-        </label>
-      </state>
-      <state type="politicalOrientation"
-             subtype="CHES"
-             source="https://www.chesdata.eu/s/1999-2019_CHES_dataset_meansv3.csv"
-             n="2.20"
-             ana="#orientation.L"
-             from="2014"
-             to="2018">
-        <label>
-          <orgName full="abb">Groen</orgName>
-        </label>
+      <state type="CHES"  key="AP!" from="2019" to="2019" source="https://www.chesdata.eu/s/1999-2019_CHES_dataset_meansv3.csv">
+        <state type="variable" ana="#ches.lrgen">
+          <state type="value" from="2019" to="2019" n="5.82"/>
+        </state>
+        <state type="variable" ana="#ches.lrecon">
+          <state type="value" from="2019" to="2019" n="5.90"/>
+        </state>
       </state>
     </egXML>
   </exemplum>
   </elementSpec>
   <elementSpec ident="listPerson" module="namesdates" mode="change">
-    <desc
-        versionDate="2006-10-08"
-        xml:lang="en">contains a list of descriptions, each of which provides information about an identifiable
+    <desc versionDate="2006-10-08" xml:lang="en">contains a list of descriptions, each of which provides information about an identifiable
     person or a group of people, for example the participants in a language interaction, or the
     people referred to in a historical source.</desc>
     <content>
@@ -3700,12 +3757,12 @@
     </exemplum>
   </elementSpec>
   <elementSpec ident="birth" module="namesdates" mode="change">
-    <desc
-        versionDate="2005-01-14"
-        xml:lang="en">contains information about a person's birth, such as its date and place.</desc>
+    <desc versionDate="2023-09-10"
+          xml:lang="en">contains information about a person's birth, obligatorily its date and optionaly the place.
+    Note that there can be several placeNames, all referring to the same place, but written in different languages or scripts.</desc>
     <content>
       <alternate>
-        <elementRef key="placeName" minOccurs="0" maxOccurs="1"/>
+        <elementRef key="placeName" minOccurs="0" maxOccurs="unbounded"/>
         <empty/>
       </alternate>
     </content>
@@ -3720,21 +3777,22 @@
         </person>
       </egXML>
     </exemplum>
-    <exemplum xml:lang="en">
+    <exemplum xml:lang="bg">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
-        <birth when="1966-03-22">
-          <placeName ref="https://www.geonames.org/2523918">Palermo</placeName>
-        </birth>
+	<birth when="1963-06-18">
+          <placeName xml:lang="bg">Димитровград</placeName>
+          <placeName xml:lang="bg-Latn">Dimitrovgrad</placeName>
+	</birth>
       </egXML>
     </exemplum>
   </elementSpec>
   <elementSpec ident="death" module="namesdates" mode="change">
-    <desc
-        versionDate="2005-12-13"
-        xml:lang="en">contains information about a person's death, such as its date and place.</desc>
+    <desc versionDate="2023-09-10"
+          xml:lang="en">contains information about a person's death, obligatorily its date and optionaly the place.
+    Note that there can be several placeNames, all referring to the same place, but written in different languages or scripts.</desc>
     <content>
       <alternate>
-        <elementRef key="placeName" minOccurs="0" maxOccurs="1"/>
+        <elementRef key="placeName" minOccurs="0" maxOccurs="unbounded"/>
         <empty/>
       </alternate>
     </content>
@@ -3746,11 +3804,17 @@
         <death when="2020-12-29"/>
       </egXML>
     </exemplum>
+    <exemplum xml:lang="bg">
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
+        <death when="2020-06-08">
+          <placeName>София</placeName>
+          <placeName xml:lang="bg-Latn">Sofiya</placeName>
+	</death>
+      </egXML>
+    </exemplum>
   </elementSpec>
   <elementSpec ident="placeName" module="namesdates" mode="change">
-    <desc
-        versionDate="2005-01-14"
-        xml:lang="en">contains an absolute or relative place name.</desc>
+    <desc versionDate="2023-10-09" xml:lang="en">contains a place name.</desc>
     <content>
       <alternate>
         <elementRef key="name" minOccurs="0" maxOccurs="1"/>
@@ -3758,34 +3822,35 @@
       </alternate>
     </content>
     <attList>
+      <pm:attPreserve ident="xml:lang"/>
       <pm:attPreserve ident="ref"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
-        <birth when="1966-03-22">
-          <placeName ref="https://www.geonames.org/2523918">Palermo</placeName>
-        </birth>
+        <placeName ref="https://www.geonames.org/2523918">Palermo</placeName>
       </egXML>
     </exemplum>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
-        <birth when="1952-06-06">
-          <placeName>Tours-Saint-Symphorien, Indre-et-Loire</placeName>
-        </birth>
+        <placeName>Tours-Saint-Symphorien, Indre-et-Loire</placeName>
       </egXML>
     </exemplum>
   </elementSpec>
   <elementSpec ident="affiliation" module="namesdates" mode="change">
-    <desc
-        versionDate="2005-01-14"
-        xml:lang="en">contains an informal description of a person's present or past affiliation with some
-    organisation, for example an employer or sponsor.</desc>
+    <desc versionDate="2024-02-29" xml:lang="en">optionally contains the role name corresponding to the affiliation,
+    the name of the organisation that the person is affiliated with, and notes giving further informal information
+    about the affiliation.</desc>
     <content>
       <elementRef key="roleName" minOccurs="0" maxOccurs="unbounded"/>
+      <elementRef key="orgName" minOccurs="0" maxOccurs="unbounded"/>
+      <elementRef key="note" minOccurs="0" maxOccurs="unbounded"/>
     </content>
     <attList>
       <attDef ident="role" mode="replace" usage="req">
         <valList type="closed">
+          <valItem ident="head"/>
+          <valItem ident="minister"/>
+          <valItem ident="member"/>
           <valItem ident="academician"/>
           <valItem ident="alternateOfDelegation"/>
           <valItem ident="associateMember"/>
@@ -3793,9 +3858,6 @@
           <valItem ident="constitutionalJudge"/>
           <valItem ident="deputyHead"/>
           <valItem ident="deputyMinister"/>
-          <valItem ident="head"/>
-          <valItem ident="member"/>
-          <valItem ident="minister"/>
           <valItem ident="ministerDelegate"/>
           <valItem ident="nonAttachedMember"/>
           <valItem ident="observer"/>
@@ -3809,32 +3871,14 @@
           <valItem ident="secretaryOfState"/>
           <valItem ident="verifier"/>
           <valItem ident="vicePublicDefenderOfRights"/>
-          <!-- Old roles, no longer valid: -->
-          <!--valItem ident="candidateMP"/-->
-          <!--valItem ident="chairperson"/-->
-          <!--valItem ident="chiefInspector"/-->
-          <!--valItem ident="commander"/-->
-          <!--valItem ident="deputyChief"/-->
-          <!--valItem ident="deputyPrimeMinister"/-->
-          <!--valItem ident="director"/-->
-          <!--valItem ident="headOfDelegation"/-->
-          <!--valItem ident="headOfDepartment"/-->
-          <!--valItem ident="leader"/-->
-          <!--valItem ident="ministerOfState"/-->
-          <!--valItem ident="presidentEP"/-->
-          <!--valItem ident="presidiumMember"/-->
-          <!--valItem ident="primeMinister"/-->
-          <!--valItem ident="substituteMP"/-->
-          <!--valItem ident="viceChairman"/-->
-          <!--valItem ident="viceDirector"/-->
-          <!--valItem ident="vicePresident"/-->
         </valList>
       </attDef>
       <pm:attPreserve ident="ref"/>
+      <pm:attPreserve ident="ana"/>
       <pm:attPreserve ident="when"/>
       <pm:attPreserve ident="from"/>
       <pm:attPreserve ident="to"/>
-      <pm:attPreserve ident="ana"/>
+      <pm:attPreserve ident="source"/>
     </attList>
     <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" source="#ParlaMint">
@@ -4031,9 +4075,7 @@
     </exemplum>
   </elementSpec>
   <elementSpec ident="language" module="header" mode="change">
-    <desc
-        versionDate="2005-01-14"
-        xml:lang="en">characterizes a single language or sublanguage used within a text.</desc>
+    <desc versionDate="2005-01-14" xml:lang="en">characterizes a single language or sublanguage used within a text.</desc>
     <content>
       <textNode/>
     </content>

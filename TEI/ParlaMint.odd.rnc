@@ -11,10 +11,10 @@ namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 namespace xsl = "http://www.w3.org/1999/XSL/Transform"
 
-# Schema generated from ODD source 2022-12-21T20:46:05Z. 2022-12-21.
-# TEI Edition: Version 4.5.0a. Last updated on
-#         25th October 2022, revision 5406e8d10
-# TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.5.0a./
+# Schema generated from ODD source 2024-03-04T10:46:02Z. 2024-03-03.
+# TEI Edition: Version 4.6.0a. Last updated on
+#         5th January 2023, revision 9074b9038
+# TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.6.0a./
 #
 
 # This file is freely available and you are hereby authorised to copy, modify, and redistribute it in any way without further reference or permissions.
@@ -377,13 +377,16 @@ tei_model.nameLike.agent_sequenceOptionalRepeatable =
   tei_name*, tei_orgName*, tei_persName*
 tei_model.nameLike.agent_sequenceRepeatable =
   tei_name+, tei_orgName+, tei_persName+
-tei_model.segLike = tei_seg | tei_s | tei_w | tei_pc
-tei_model.segLike_alternation = tei_seg | tei_s | tei_w | tei_pc
-tei_model.segLike_sequence = tei_seg, tei_s, tei_w, tei_pc
-tei_model.segLike_sequenceOptional = tei_seg?, tei_s?, tei_w?, tei_pc?
+tei_model.segLike = tei_seg | tei_s | tei_phr | tei_w | tei_pc
+tei_model.segLike_alternation =
+  tei_seg | tei_s | tei_phr | tei_w | tei_pc
+tei_model.segLike_sequence = tei_seg, tei_s, tei_phr, tei_w, tei_pc
+tei_model.segLike_sequenceOptional =
+  tei_seg?, tei_s?, tei_phr?, tei_w?, tei_pc?
 tei_model.segLike_sequenceOptionalRepeatable =
-  tei_seg*, tei_s*, tei_w*, tei_pc*
-tei_model.segLike_sequenceRepeatable = tei_seg+, tei_s+, tei_w+, tei_pc+
+  tei_seg*, tei_s*, tei_phr*, tei_w*, tei_pc*
+tei_model.segLike_sequenceRepeatable =
+  tei_seg+, tei_s+, tei_phr+, tei_w+, tei_pc+
 tei_model.hiLike = notAllowed
 tei_model.hiLike_alternation = notAllowed
 tei_model.hiLike_sequence = empty
@@ -768,6 +771,9 @@ tei_gap =
   ## (gap) indicates a point where material has been omitted in a transcription, whether for editorial reasons described in the TEI header, as part of sampling practice, or because the material is illegible, invisible, or inaudible. [3.5.3. Additions, Deletions, and Omissions]
   element gap {
     tei_desc+,
+    tei_att.global.attribute.xmlid,
+    tei_att.global.attribute.n,
+    tei_att.global.attribute.xmllang,
     
     ##
     attribute reason {
@@ -787,7 +793,19 @@ tei_name =
   
   ## (name, proper noun) contains a proper noun or noun phrase. [3.6.1. Referring Strings]
   element name {
-    (tei_w | tei_pc | tei_name | tei_date | tei_num | tei_pb | text)+,
+    (tei_w
+     | tei_pc
+     | tei_name
+     | tei_date
+     | tei_num
+     | tei_time
+     | tei_note
+     | tei_vocal
+     | tei_kinesic
+     | tei_incident
+     | tei_gap
+     | tei_pb
+     | text)+,
     tei_att.global.attribute.xmlid,
     tei_att.global.attribute.xmllang,
     tei_att.global.analytic.attribute.ana,
@@ -1121,6 +1139,7 @@ tei_teiCorpus =
   element teiCorpus {
     tei_teiHeader,
     (tei_TEI | tei_include)+,
+    tei_att.global.linking.attribute.corresp,
     
     ##
     attribute xml:id { xsd:ID },
@@ -1430,6 +1449,7 @@ tei_category =
   element category {
     tei_catDesc+,
     tei_category*,
+    tei_att.global.attribute.n,
     
     ## (identifier) provides a unique identifier for the element bearing the attribute.
     attribute xml:id { xsd:ID },
@@ -1579,6 +1599,7 @@ tei_TEI =
          prefix = "rng"
          uri = "http://relaxng.org/ns/structure/1.0"
        ],
+    tei_att.global.linking.attribute.corresp,
     
     ##
     attribute xml:id { xsd:ID },
@@ -1674,6 +1695,7 @@ tei_div =
     tei_att.global.attribute.xmlid,
     tei_att.global.attribute.n,
     tei_att.global.attribute.xmllang,
+    tei_att.global.linking.attribute.corresp,
     tei_att.typed.attribute.subtype,
     
     ##
@@ -1747,6 +1769,7 @@ tei_u =
     tei_att.global.attribute.xmlid,
     tei_att.global.attribute.n,
     tei_att.global.attribute.xmllang,
+    tei_att.global.linking.attribute.corresp,
     tei_att.global.linking.attribute.next,
     tei_att.global.linking.attribute.prev,
     tei_att.global.analytic.attribute.ana,
@@ -2094,6 +2117,7 @@ tei_persName =
       | tei_surname+)+
      | (tei_term)+
      | (text)),
+    tei_att.global.attribute.xmlid,
     tei_att.global.attribute.xmllang,
     tei_att.datable.w3c.attribute.from,
     tei_att.datable.w3c.attribute.to,
@@ -2103,52 +2127,58 @@ tei_persName =
 tei_surname =
   
   ## (surname) contains a family (inherited) name, as opposed to a given, baptismal, or nick name. [13.2.1. Personal Names]
-  element surname { text }
-tei_forename =
-  
-  ## (forename) contains a forename, given or baptismal name. [13.2.1. Personal Names]
-  element forename {
+  element surname {
     text,
-    tei_att.global.attributes,
-    tei_att.personal.attributes,
-    tei_att.typed.attributes,
-    empty
-  }
-tei_nameLink =
-  
-  ## (name link) contains a connecting phrase or link used within a name but not regarded as part of it, such as van der or of. [13.2.1. Personal Names]
-  element nameLink { text }
-tei_addName =
-  
-  ## (additional name) contains an additional name component, such as a nickname, epithet, or alias, or any other descriptive phrase used within a personal name. [13.2.1. Personal Names]
-  element addName { text }
-tei_roleName =
-  
-  ## (role name) contains a name component which indicates that the referent has a particular role or position in society, such as an official title or rank. [13.2.1. Personal Names]
-  element roleName {
-    text,
+    tei_att.global.attribute.xmllang,
     
     ##
-    attribute xml:lang {
-      xsd:language
-      | (
-         ##
-         "")
+    attribute type {
+      
+      ##
+      "birth"
+      | 
+        ##
+        "patronym"
+      | 
+        ##
+        "married"
     }?,
     empty
   }
+tei_forename =
+  
+  ## (forename) contains a forename, given or baptismal name. [13.2.1. Personal Names]
+  element forename { text, tei_att.global.attribute.xmllang, empty }
+tei_nameLink =
+  
+  ## (name link) contains a connecting phrase or link used within a name but not regarded as part of it, such as van der or of. [13.2.1. Personal Names]
+  element nameLink { text, tei_att.global.attribute.xmllang, empty }
+tei_addName =
+  
+  ## (additional name) contains an additional name component, such as a nickname, epithet, or alias, or any other descriptive phrase used within a personal name. [13.2.1. Personal Names]
+  element addName { text, tei_att.global.attribute.xmllang, empty }
+tei_roleName =
+  
+  ## (role name) contains a name component which indicates that the referent has a particular role or position in society, such as an official title or rank. [13.2.1. Personal Names]
+  element roleName { text, tei_att.global.attribute.xmllang, empty }
 tei_placeName =
   
-  ## (place name) contains an absolute or relative place name. [13.2.3. Place Names]
+  ## (place name) contains a place name. [13.2.3. Place Names]
   element placeName {
-    (tei_name? | text), tei_att.canonical.attribute.ref, empty
+    (tei_name? | text),
+    tei_att.global.attribute.xmllang,
+    tei_att.canonical.attribute.ref,
+    empty
   }
 tei_affiliation =
   
-  ## (affiliation) contains an informal description of a person's present or past affiliation with some organisation, for example an employer or sponsor. [15.2.2. The Participant Description]
+  ## (affiliation) optionally contains the role name corresponding to the affiliation, the name of the organisation that the person is affiliated with, and notes giving further informal information about the affiliation. [15.2.2. The Participant Description]
   element affiliation {
     tei_roleName*,
+    tei_orgName*,
+    tei_note*,
     tei_att.global.analytic.attribute.ana,
+    tei_att.global.source.attribute.source,
     tei_att.datable.w3c.attribute.when,
     tei_att.datable.w3c.attribute.from,
     tei_att.datable.w3c.attribute.to,
@@ -2158,7 +2188,16 @@ tei_affiliation =
     attribute role {
       
       ##
-      "academician"
+      "head"
+      | 
+        ##
+        "minister"
+      | 
+        ##
+        "member"
+      | 
+        ##
+        "academician"
       | 
         ##
         "alternateOfDelegation"
@@ -2177,15 +2216,6 @@ tei_affiliation =
       | 
         ##
         "deputyMinister"
-      | 
-        ##
-        "head"
-      | 
-        ##
-        "member"
-      | 
-        ##
-        "minister"
       | 
         ##
         "ministerDelegate"
@@ -2230,9 +2260,9 @@ tei_affiliation =
   }
 tei_birth =
   
-  ## (birth) contains information about a person's birth, such as its date and place. [15.2.2. The Participant Description]
+  ## (birth) contains information about a person's birth, obligatorily its date and optionaly the place. Note that there can be several placeNames, all referring to the same place, but written in different languages or scripts. [15.2.2. The Participant Description]
   element birth {
-    (tei_placeName?),
+    (tei_placeName*),
     
     ## supplies the value of the date or time in a standard form, e.g. yyyy-mm-dd.
     attribute when {
@@ -2249,9 +2279,9 @@ tei_birth =
   }
 tei_death =
   
-  ## (death) contains information about a person's death, such as its date and place. [15.2.2. The Participant Description]
+  ## (death) contains information about a person's death, obligatorily its date and optionaly the place. Note that there can be several placeNames, all referring to the same place, but written in different languages or scripts. [15.2.2. The Participant Description]
   element death {
-    (tei_placeName?),
+    (tei_placeName*),
     
     ## supplies the value of the date or time in a standard form, e.g. yyyy-mm-dd.
     attribute when {
@@ -2328,7 +2358,7 @@ tei_occupation =
   }
 tei_org =
   
-  ## (organization) provides information about an identifiable organisation such as a business, a tribe, or any other grouping of people. [13.3.3. Organizational Data]
+  ## (organization) provides information about an identifiable organisation such as the government, political party, ministry etc. [13.3.3. Organizational Data]
   element org {
     (tei_head*,
      tei_orgName+,
@@ -2337,6 +2367,7 @@ tei_org =
      tei_desc?,
      tei_listEvent?,
      tei_state*),
+    tei_att.global.attribute.xmllang,
     tei_att.global.analytic.attribute.ana,
     
     ## (identifier) provides a unique identifier for the element bearing the attribute.
@@ -2347,6 +2378,9 @@ tei_org =
       
       ##
       "country"
+      | 
+        ##
+        "federatedState"
       | 
         ##
         "republic"
@@ -2582,13 +2616,14 @@ tei_sex =
   }
 tei_state =
   
-  ## (state) defines the political orientation of a political party or parliamentary group. The orientation can be taken from CHES, Wikipedia or an unknown source. [13.3.1. Basic Principles 13.3.2.1. Personal Characteristics]
+  ## (state) defines additional metadata on a political party or parliamentary group, e.g. its political orientation. [13.3.1. Basic Principles 13.3.2.1. Personal Characteristics]
   element state {
-    (tei_label | tei_note*),
+    (tei_note*, tei_state*),
     tei_att.global.attribute.n,
     tei_att.global.source.attribute.source,
     tei_att.datable.w3c.attribute.from,
     tei_att.datable.w3c.attribute.to,
+    tei_att.canonical.attribute.key,
     [
       a:documentation [
         "(analysis) indicates one or more elements containing interpretations of the element on which the "
@@ -2598,26 +2633,28 @@ tei_state =
     ]
     attribute ana {
       xsd:anyURI { pattern = "\S+" }
-    },
+    }?,
     
     ##
     attribute type {
       
       ##
       "politicalOrientation"
-    },
-    
-    ##
-    attribute subtype {
-      
-      ##
-      "CHES"
+      | 
+        ##
+        "encoder"
       | 
         ##
         "Wikipedia"
       | 
         ##
-        "unknown"
+        "CHES"
+      | 
+        ##
+        "variable"
+      | 
+        ##
+        "value"
     },
     empty
   }
@@ -2697,6 +2734,7 @@ tei_seg =
     tei_att.global.attribute.xmlid,
     tei_att.global.attribute.n,
     tei_att.global.attribute.xmllang,
+    tei_att.global.linking.attribute.corresp,
     empty
   }
 tei_figure =
@@ -2710,6 +2748,7 @@ tei_s =
     (tei_w
      | tei_pc
      | tei_name
+     | tei_phr
      | tei_num
      | tei_date
      | tei_time
@@ -2719,7 +2758,7 @@ tei_s =
      | tei_incident
      | tei_gap
      | tei_pb)+,
-    tei_linkGrp
+    (tei_linkGrp?)
     >> sch:pattern [
          id = "parlamint-s-noNestedS-constraint-report-12"
          "\x{a}" ~
@@ -2742,6 +2781,40 @@ tei_s =
     tei_att.global.attribute.xmlid,
     tei_att.global.attribute.n,
     tei_att.global.attribute.xmllang,
+    tei_att.global.linking.attribute.corresp,
+    empty
+  }
+tei_phr =
+  
+  ## (phrase) contains a semantic multi-word unit. [17.1. Linguistic Segment Categories]
+  element phr {
+    (tei_w | tei_pc | tei_pb | text)+,
+    tei_att.global.attribute.xmlid,
+    tei_att.global.attribute.xmllang,
+    [
+      a:documentation [
+        "(analysis) indicates one or more elements containing interpretations of the element on which the "
+        ns1:code [ "@ana" ]
+        " attribute appears."
+      ]
+    ]
+    attribute ana {
+      list {
+        xsd:anyURI { pattern = "\S+" }+
+      }
+    },
+    
+    ## (function) characterizes the function of the segment.
+    attribute function {
+      xsd:token { pattern = "[^\p{C}\p{Z}]+" }
+    },
+    
+    ##
+    attribute type {
+      
+      ##
+      "sem"
+    }?,
     empty
   }
 tei_w =
@@ -2773,17 +2846,6 @@ tei_pc =
     attribute msd { xsd:string },
     empty
   }
-tei_att.global.attributes =
-  tei_att.global.rendition.attributes,
-  tei_att.global.linking.attributes,
-  tei_att.global.analytic.attributes,
-  tei_att.global.responsibility.attributes,
-  tei_att.global.source.attributes,
-  tei_att.global.attribute.xmlid,
-  tei_att.global.attribute.n,
-  tei_att.global.attribute.xmllang,
-  tei_att.global.attribute.xmlbase,
-  tei_att.global.attribute.xmlspace
 tei_att.global.attribute.xmlid =
   
   ## (identifier) provides a unique identifier for the element bearing the attribute.
@@ -3014,8 +3076,6 @@ sch:pattern [
   "\x{a}" ~
   "   "
 ]
-tei_att.naming.attributes =
-  tei_att.canonical.attributes, tei_att.naming.attribute.role
 tei_att.naming.attribute.role =
   
   ## may be used to specify further information about the entity referenced by this name in the form of a set of whitespace-separated values, for example the occupation of a person, or the status of a place.
@@ -3024,8 +3084,6 @@ tei_att.naming.attribute.role =
       xsd:token { pattern = "[^\p{C}\p{Z}]+" }+
     }
   }?
-tei_att.personal.attributes =
-  tei_att.naming.attributes, tei_att.personal.attribute.full
 tei_att.personal.attribute.full =
   
   ## indicates whether the name component is given in full, as an abbreviation or simply as an initial.
